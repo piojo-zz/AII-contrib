@@ -1,0 +1,9 @@
+COMP=boot_raid1
+NAME=ndpf-$(COMP)
+AUTHOR=Ronald Starink
+MAINTAINER=Ronald Starink
+DESCRIPTION=AII hook to install the GRUB bootloader on all bootable disks of a RAID1 array
+DESCR=$(DESCRIPTION)
+VERSION=0.1.0
+RELEASE=1
+DATE=16/04/08 12:00

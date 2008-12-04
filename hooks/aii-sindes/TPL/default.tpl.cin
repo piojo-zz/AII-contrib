@@ -1,0 +1,59 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+template quattor/aii/aii_sindes/default;
+
+include quattor/aii/aii_sindes/schema;
+
+
+## open a request window for 2000s after the boot (mainly through aii-ack).
+variable SINDES_AII_REQUEST_WINDOW ?= 2000;
+variable SINDES_AII_REMOVE_REVOKE ?= true;
+
+###
+### KS
+###
+
+variable SINDES_HOOK_POST_REBOOT ?= which_hook_is_next("/system/aii/hooks/post_reboot");
+
+"/system/aii/hooks/post_reboot/" = {
+    SELF[SINDES_HOOK_POST_REBOOT]['module']=SINDES_AII_MODULE_NAME;
+    SELF;
+};
+
+bind "/system/aii/hooks" = nlist with validate_aii_sindes_hooks('post_reboot');
+
+### 
+### PXE
+###
+
+variable SINDES_HOOK_BOOT ?= which_hook_is_next("/system/aii/hooks/boot");
+
+"/system/aii/hooks/boot/" = {
+    SELF[SINDES_HOOK_BOOT]['module']=SINDES_AII_MODULE_NAME;
+    SELF[SINDES_HOOK_BOOT]['window'] = SINDES_AII_REQUEST_WINDOW;
+    SELF;
+};
+
+bind "/system/aii/hooks" = nlist with validate_aii_sindes_hooks('boot');
+
+
+variable SINDES_HOOK_REMOVE ?= which_hook_is_next("/system/aii/hooks/remove/");
+
+"/system/aii/hooks/remove/" = {
+    SELF[SINDES_HOOK_REMOVE]['module']=SINDES_AII_MODULE_NAME;
+    SELF;
+};
+
+bind "/system/aii/hooks" = nlist with validate_aii_sindes_hooks('remove');
+
+

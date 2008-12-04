@@ -1,0 +1,4 @@
+This user hook for KS is executed during the anaconda install phase.
+It allows to directly define the partitioning statements, bypassing the more flexible but also more complicated setup via ncm-filesystems.
+
+Documentation to be improved.

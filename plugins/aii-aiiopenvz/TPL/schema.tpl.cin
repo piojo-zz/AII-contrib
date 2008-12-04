@@ -1,0 +1,23 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+declaration template quattor/aii/@COMP@/schema;
+
+# Empty. There are no Kickstart, nor PXE when bootstrapping an OpenVZ
+# guest. Everything can be derived from other parts of the
+# configuration tree.
+type structure_@COMP@_vzinfo = {
+    # Dummy field just to make sure this path appears on the profile.
+    "dummy" : string = "empty"
+};
+
+bind "/system/aii/osinstall/@COMP@" = structure_@COMP@_vzinfo;

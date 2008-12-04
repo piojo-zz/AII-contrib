@@ -1,0 +1,57 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+# File: @COMP@.pm
+# Implementation of ncm-@COMP@
+# Author: @AUTHOR@
+# Version: @VERSION@ : @DATE@
+# @MSG@
+#
+# Note: all methods in this component are called in a
+# $self->$method ($config) way, unless explicitly stated.
+
+package xen_dom0;
+
+use strict;
+use warnings;
+use NCM::Component::ks qw (kspkglist kspkgurl);
+use LWP::UserAgent;
+
+use constant CCM	=> '/software/components/ccm';
+use constant NODE_CERT	=> 'node_cert_gen';
+use constant HOSTNAME	=> '/system/network/hostname';
+use constant DOMAIN	=> '/system/network/domainname';
+
+sub new
+{
+	my $class = shift;
+	return bless {}, $class;
+}
+
+#
+# Actions required *before* booting into the Xen kernel at the Dom-0
+#
+sub post_install
+{
+	my ($self, $config, $path) = @_;
+
+	# my $th = $config->getElement ($path)->getTree;
+
+	print <<EOF;
+if [ -L /etc/libvirt/qemu/networks/autostart/default.xml ]; then
+    /bin/rm /etc/libvirt/qemu/networks/autostart/default.xml
+fi
+EOF
+
+}
+
+1;

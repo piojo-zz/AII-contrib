@@ -1,0 +1,9 @@
+COMP=disklayout
+NAME=ndpf-$(COMP)
+AUTHOR=Ronald Starink
+MAINTAINER=Ronald Starink
+DESCRIPTION=AII plug-in to directly define partitions in Anaconda
+DESCR=$(DESCRIPTION)
+VERSION=0.1.0
+RELEASE=1
+DATE=05/06/08 12:00

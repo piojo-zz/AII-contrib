@@ -1,0 +1,62 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+# File: @COMP@.pm
+# Implementation of ncm-@COMP@
+# Author: @AUTHOR@
+# Version: @VERSION@ : @DATE@
+# @MSG@
+#
+# Note: all methods in this component are called in a
+# $self->$method ($config) way, unless explicitly stated.
+
+package disklayout;
+
+use strict;
+use warnings;
+use NCM::Component::ks qw (kspkglist kspkgurl);
+use LWP::UserAgent;
+
+use constant CCM	=> '/software/components/ccm';
+use constant NODE_CERT	=> 'node_cert_gen';
+use constant HOSTNAME	=> '/system/network/hostname';
+use constant DOMAIN	=> '/system/network/domainname';
+
+sub new
+{
+	my $class = shift;
+	return bless {}, $class;
+}
+
+#
+# Direct specification of the Anaconda disk layout, without the need for
+# ncm-filesystems
+#
+sub anaconda
+{
+	my ($self, $config, $path) = @_;
+
+	my $th = $config->getElement ($path)->getTree;
+
+    my $disklayout = $th->{disklayout};
+
+	print "#\n# This is the Anaconda hook disklayout\n#\n\n";
+
+    foreach my $str (@$disklayout) {
+        print "$str\n";
+    }
+
+    print "#\n# End of Anaconda disklayout hook\n#\n\n";
+
+}
+
+1;

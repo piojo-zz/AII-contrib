@@ -1,0 +1,44 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+# File: @COMP@.pm
+# Implementation of ncm-@COMP@
+# Author: @AUTHOR@
+# Version: @VERSION@ : @DATE@
+# @MSG@
+#
+# Note: all methods in this component are called in a
+# $self->$method ($config) way, unless explicitly stated.
+
+package NCM::Component::@COMP@;
+
+use strict;
+use warnings;
+use NCM::Component::ks;
+use EDG::WP4::CCM::Property;
+use NCM::Check;
+use FileHandle;
+
+our @ISA = qw (NCM::Component::ks);
+our $EC = LC::Exception::Context->new->will_store_all;
+
+sub Configure
+{
+    my ($self, $config) = @_;
+
+    $self->ksopen ($config);
+
+    $self->post_reboot_script ($config);
+
+    $self->ksclose;
+    return 1;
+}

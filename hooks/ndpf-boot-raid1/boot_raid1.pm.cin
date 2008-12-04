@@ -1,0 +1,72 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+# File: @COMP@.pm
+# Implementation of ncm-@COMP@
+# Author: @AUTHOR@
+# Version: @VERSION@ : @DATE@
+# @MSG@
+#
+# Note: all methods in this component are called in a
+# $self->$method ($config) way, unless explicitly stated.
+
+package boot_raid1;
+
+use strict;
+use warnings;
+use NCM::Component::ks qw (kspkglist kspkgurl);
+use LWP::UserAgent;
+
+use constant CCM	=> '/software/components/ccm';
+
+sub new
+{
+	my $class = shift;
+	return bless {}, $class;
+}
+
+#
+# Install GRUB bootloader on all disks in RAID-1 array for booting
+# so that removing the first disk from the array still leaves a
+# bootable setup
+#
+sub post_install
+{
+	my ($self, $config, $path) = @_;
+
+	print <<EOF;
+BOOT_ARRAY=`df /boot | awk '/dev/{print \$1}'`
+if [ -n "\$BOOT_ARRAY" ] ; then
+  # Select only active disks (skip spares) 
+  DISKS=`mdadm --query --detail \$BOOT_ARRAY | awk '/active sync/{print \$7}'| sed ' 
+s!/dev/!!g 
+s/,/ /g 
+s/[0-9]//g 
+'`
+
+  for d in \$DISKS
+  do
+
+    cat <<EOGRUB | /sbin/grub --batch 
+device (hd0) /dev/\$d 
+root (hd0,0) 
+setup (hd0) 
+quit 
+EOGRUB
+
+  done
+fi
+EOF
+
+}
+
+1;

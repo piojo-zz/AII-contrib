@@ -1,0 +1,4 @@
+Trivial AII hook to install the GRUB bootloader on all disks
+in a RAID1 array used for the /boot partition (if any).
+
+Documentation to be improved.

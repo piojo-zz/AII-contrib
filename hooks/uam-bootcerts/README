@@ -1,0 +1,9 @@
+Trivial AII hook for initializing the use of certificates within
+CCM. I'll add the documentation some day. The code of the certificate
+packages can be found at 
+https://heppc1.ft.uam.es/svn/Quattor_Dev/UAM/
+
+(files ca_windows.pl, node_cert_ca.pl, openssl.conf,
+node_cert_gen.sh).
+
+Documentation to be improved.

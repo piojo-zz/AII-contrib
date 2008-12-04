@@ -1,0 +1,15 @@
+2008-03-24  Luis Fernando Muñoz Mejías
+
+	* Release: 0.2.0
+	- Commetnts in English, more documentation to follow.
+
+2008-03-24  Luis Fernando Muñoz Mejías
+
+	* Release: 0.1
+	- Added an AII hook that handles the creation of a node certificate upon installation.
+	The CGIs and scripts that actually handle time windows and certificate signatures are on UAM's
+	Subversion.
+
+2008-03-24  Luis Fernando Muñoz Mejías  <mejias@delta.ft.uam.es>
+
+	* Added an example hook to CVS.

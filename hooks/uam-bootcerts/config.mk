@@ -1,0 +1,9 @@
+COMP=bootcerts
+NAME=uam-$(COMP)
+AUTHOR=Luis Fernando Muñoz Mejías
+MAINTAINER=Luis Fernando Muñoz Mejías
+DESCRIPTION=AII plug-in that generates Kickstart files.
+DESCR=$(DESCRIPTION)
+VERSION=0.2.0
+RELEASE=1
+DATE=24/03/08 17:04

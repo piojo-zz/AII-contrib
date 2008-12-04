@@ -1,0 +1,21 @@
+=pod
+
+=head1 DESCRIPTION
+
+This AII plug-in generates a pseudo-kickstart for the installation of
+OpenVZ guests.
+
+OpenVZ VEs only need the same post-reboot script that runs on a
+regular node during the first boot.
+
+=head1 RESOURCES
+
+None. No Kickstart or extra configuration is needed. However,
+user-defined post-reboot scripts and hooks will be run.
+
+=head1 SEE ALSO
+
+L<aii-ks(8)> L<aii-hooks(8)>
+
+=cut
+

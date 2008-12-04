@@ -1,0 +1,29 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+unique template quattor/aii/bootcerts/schema;
+
+type structure_bootcert = {
+	"module"   : string = "bootcerts"
+	 # URL to CA's certificate
+	"cacrturl" : type_absoluteURI
+	# URL to the application that will sign the certificate request
+	"caurl" : type_absoluteURI
+	# URL to the CGI that manages time windows.
+	"windowurl" : type_absoluteURI
+};
+
+# Bind this to the path you need it. Probably it's better to have the
+# actual binding outside this file and move it to your own
+# customization file:
+
+#bind "/system/aii/hooks/post_reboot/0" = structure_bootcert;

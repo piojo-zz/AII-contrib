@@ -1,0 +1,5 @@
+Trivial AII hook to remove a symlink before rebooting. This is
+needed for Xen Dom-0 servers, which otherwise lose their network
+connection.
+
+Documentation to be improved.

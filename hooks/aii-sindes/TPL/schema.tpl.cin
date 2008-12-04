@@ -1,0 +1,96 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+unique template quattor/aii/aii_sindes/schema;
+
+variable SINDES_AII_MODULE_NAME = 'NCM::Component::aii_sindes';
+
+## a function to validate all aii_sindes hooks
+## bind "/system/aii/hooks" = nlist with validate_aii_sindes_hooks('post_reboot')
+##
+
+function which_hook_is_next = {
+    name = 'which_hook_is_next';
+    if (ARGC != 1) {
+        error(name+": requires only one argument");
+    };
+    if (exists(to_string(ARGV[0]))) {
+        hooks=value(to_string(ARGV[0]));
+        return(length(hooks));
+    } else {
+        return(0);
+    };
+};
+
+function validate_aii_sindes_hooks = {
+    name = 'validate_aii_sindes_hooks';
+    if (ARGC != 1) {
+        error(name+": requires only one argument");
+    };
+    
+    if (! exists(SELF[ARGV[0]])) {
+        error(name+": no "+ARGV[0]+" hook found.");
+    };
+    
+    
+    l = SELF[ARGV[0]];
+    found = false;
+    ind = 0;
+    foreach(i;v;l) {
+        if (exists(v['module']) && v['module'] == SINDES_AII_MODULE_NAME) {
+            if (found) {
+                error(nam+": second aii_sindes "+ARGV[0]+" hook found");
+            } else {
+                found = true;
+                ind = i;
+            };
+        };
+    };
+    
+    if (! found) {
+        error(name+": no aii_sindes "+ARGV[0]+" hook found");
+    };
+    
+    ##
+    ## validate the hook
+    ## the module name is already validated
+    ##
+    if (ARGV[0] == 'post_reboot'){
+        ## no options to parse?
+        a = 1;        
+    } else if (ARGV[0] == 'boot'){
+        if(exists(SELF[ARGV[0]][ind]['window'])) {
+            if (! is_long(SELF[ARGV[0]][ind]['window']) && SELF[ARGV[0]][ind]['window'] < 0) {
+                error(name+": aii_sindes boot hook window must be a long > 0");
+            };
+        };
+    } else if (ARGV[0] == 'remove'){
+        if(exists(SELF[ARGV[0]][ind]['revoke'])) {
+            if (! is_boolean(SELF[ARGV[0]][ind]['revoke'])) {
+                error(name+": aii_sindes remove hook revoke must be a boolean");
+            };
+        };
+    } else {
+        error(name+": no aii_sindes hook "+ARGV[0]+" supported");
+    };    
+
+    return(true);
+};
+
+type structure_aii_sindes = {
+	"module"   : string with SELF == SINDES_AII_MODULE_NAME
+	## window = 0 is not possible
+	"window"   ? long with SELF > 0
+	## revoke option for remove
+	"revoke" ? boolean
+};
+

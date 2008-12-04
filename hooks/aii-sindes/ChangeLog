@@ -1,0 +1,10 @@
+2008-04-25  SDW
+
+    * Release: 0.2.1
+    - Working pxe + ks hooks + example and schema
+
+2008-04-18  SDW
+
+	* Release: 0.1.1
+	- First release: ks config file + pxe install hooks
+

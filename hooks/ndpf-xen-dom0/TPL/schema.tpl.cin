@@ -1,0 +1,23 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+unique template quattor/aii/@COMP@/schema;
+
+type structure_xen_dom0 = {
+	"module"   : string = "xen_dom0"
+};
+
+# Bind this to the path you need it. Probably it's better to have the
+# actual binding outside this file and move it to your own
+# customization file:
+
+#bind "/system/aii/hooks/post_install/0" = structure_@COMP@;

@@ -1,0 +1,74 @@
+################################################################################
+# This is '@SELF@', a @NAME@'s file
+################################################################################
+#
+# VERSION:    @VERSION@, @DATE@
+# AUTHOR:     @AUTHOR@
+# MAINTAINER: @MAINTAINER@
+# LICENSE:    @LICENSE@
+#
+################################################################################
+# Coding style: emulate <TAB> characters with 4 spaces, thanks!
+################################################################################
+# File: @COMP@.pm
+# Implementation of ncm-@COMP@
+# Author: @AUTHOR@
+# Version: @VERSION@ : @DATE@
+# @MSG@
+#
+# Note: all methods in this component are called in a
+# $self->$method ($config) way, unless explicitly stated.
+
+package bootcerts;
+
+use strict;
+use warnings;
+use NCM::Component::ks qw (kspkglist kspkgurl);
+use LWP::UserAgent;
+
+use constant CCM	=> '/software/components/ccm';
+use constant NODE_CERT	=> 'node_cert_gen';
+use constant HOSTNAME	=> '/system/network/hostname';
+use constant DOMAIN	=> '/system/network/domainname';
+
+sub new
+{
+	my $class = shift;
+	return bless {}, $class;
+}
+
+sub open_window
+{
+	my ($t, $cfg) = @_;
+
+	my $h = $cfg->getElement (HOSTNAME)->getValue;
+	my $d = $cfg->getElement (DOMAIN)->getValue;
+	# Open the window frame.
+	my $ua = LWP::UserAgent->new;
+	$main::this_app->debug (4, "Opening window from: ", $t->{windowurl});
+	my $rp = $ua->get ($t->{windowurl} . "?node=$h.$d");
+	$main::this_app->error ("Failed to open time window at: ",
+				$t->{windowurl}) unless $rp->is_success;
+}
+
+sub post_reboot
+{
+	my ($self, $config, $path) = @_;
+
+	my $th = $config->getElement ($path)->getTree;
+	my $tccm = $config->getElement (CCM)->getTree;
+
+	my @pkgs = kspkglist ($config, NODE_CERT);
+	print qq !/bin/rpm -i --force "!, kspkgurl ($config, $_), qq !"\\\n!,
+	    qq!    || fail \"RPM $_->{pkg} failed\"\n!
+	    foreach @pkgs;
+
+	print <<EOF;
+/usr/sbin/node_cert_gen.sh $tccm->{key_file} $tccm->{cert_file} \\
+    $tccm->{ca_file} $th->{caurl} $th->{cacrturl}
+EOF
+
+	open_window ($th, $config);
+}
+
+1;
