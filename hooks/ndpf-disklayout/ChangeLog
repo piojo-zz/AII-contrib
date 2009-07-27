@@ -1,3 +1,9 @@
+2009-07-27  Ronald Starink, NIKHEF, x5180
+
+	* Release: 0.1.1
+	- Insert "AII::" in packages name, install package in subdir AII of /usr/lib/perl, for compatibility with recent aii-ks versions
+    - Fix location of build tools in Makefile and respect release number in specfile.
+
 2008-06-05  Ronald Starink
 
     * Draft

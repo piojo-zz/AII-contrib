@@ -9,7 +9,7 @@ Summary: @DESCRIPTION@
 Name: @NAME@
 Version: @VERSION@
 Vendor: EDG/CERN
-Release: 1
+Release: @RELEASE@
 License: http://cern.ch/eu-datagrid/license.html
 Group: quattor/Components
 Source: @TARFILE@
@@ -37,7 +37,7 @@ make PREFIX=$RPM_BUILD_ROOT install
 %files
 %defattr(-,root,root)
 %doc /usr/share/doc/@NAME@-@VERSION@/
-@QTTR_PERLLIB@/@COMP@.pm
+@QTTR_PERLLIB@/AII/@COMP@.pm
 @PAN_TEMPLATESDIR@/@PAN_NAMESPACE_SDIR@/@PAN_QUATTOR_NS@/aii/@COMP@/*
 
 %clean
