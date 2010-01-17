@@ -12,7 +12,7 @@
 ################################################################################
 unique template quattor/aii/aii_sindes/schema;
 
-variable SINDES_AII_MODULE_NAME = 'NCM::Component::aii_sindes';
+variable SINDES_AII_MODULE_NAME = 'aii_sindes';
 
 ## a function to validate all aii_sindes hooks
 ## bind "/system/aii/hooks" = nlist with validate_aii_sindes_hooks('post_reboot')

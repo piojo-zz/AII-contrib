@@ -19,7 +19,7 @@
 # Note: all methods in this component are called in a
 # $self->$method ($config) way, unless explicitly stated.
 
-package NCM::Component::aii_sindes;
+package AII::aii_sindes;
 
 use strict;
 use warnings;

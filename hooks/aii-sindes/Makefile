@@ -6,7 +6,7 @@
 
 all: configure man
 
-BTDIR := ../../../../../quattor-build-tools
+BTDIR := ../../../../quattor-build-tools
 
 _btincl := $(shell ls $(BTDIR)/quattor-buildtools.mk 2>/dev/null || \
              echo quattor-buildtools.mk)
@@ -25,7 +25,7 @@ _DIRTY_TPL_FILES += $(addsuffix .cin,$(TPL_FILES) )
 
 PMPATH = $(QTTR_PERLLIB)/$(PACKAGE_PATH)
 
-configure: check $(AII_PM) $(TPL_FILES) 
+configure: check $(AII_PM) $(TPL_FILES)
 
 install: check configure man
 
@@ -34,10 +34,10 @@ install: check configure man
 	@mkdir -p $(PREFIX)/$(PMPATH)
 	@mkdir -p $(PREFIX)/$(QTTR_DOC)
 	@mkdir -p $(PREFIX)/$(PAN_TEMPLATESDIR)/$(PAN_NAMESPACE_SDIR)/$(PAN_QUATTOR_NS)/aii/$(COMP)
-	@mkdir -p $(PREFIX)/$(NCM_COMP)
+	@mkdir -p $(PREFIX)/$(QTTR_PERLLIB)/AII
 
 	@for i in $(AII_PM); do \
-                install -m 0644 $$i $(PREFIX)/$(NCM_COMP); \
+                install -m 0644 $$i $(PREFIX)/$(QTTR_PERLLIB)/AII; \
         done
 
 	@for i in LICENSE ChangeLog README; do \
