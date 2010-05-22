@@ -236,7 +236,7 @@ stse=\\\$stso.error
 cmd="wget -q -O \\\$stso http://$th->{server}/sindes-timestamp >& \\\$stse"
 \\\$cmd
 ec=\\\$?
-if [ \$ec -eq 0 ]
+if [ \\\$ec -eq 0 ]
 then
   timestamp=\\\`cat \\\$stso | head -1 |tr "'" '_'|grep -v '[_\\\$;-()"]'\\\`
   if [ -z \\\$timestamp ]
