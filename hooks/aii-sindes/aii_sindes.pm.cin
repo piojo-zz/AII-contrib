@@ -234,7 +234,7 @@ stso=/tmp/sindes-timestamp
 stse=\\\$stso.error
 
 cmd="wget -q -O \\\$stso http://$th->{server}/sindes-timestamp >& \\\$stse"
-\\\$cmd
+wget -q -O \\\$stso http://$th->{server}/sindes-timestamp >& \\\$stse
 ec=\\\$?
 if [ \\\$ec -eq 0 ]
 then
