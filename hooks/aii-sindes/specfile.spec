@@ -39,6 +39,8 @@ make PREFIX=$RPM_BUILD_ROOT install
 %doc /usr/share/doc/@NAME@-@VERSION@/
 @QTTR_PERLLIB@/AII/@COMP@.pm
 @PAN_TEMPLATESDIR@/@PAN_NAMESPACE_SDIR@/@PAN_QUATTOR_NS@/aii/@COMP@/*
+/usr/bin/sindes-timestamp.pl
+/etc/httpd/conf.d/sindes-timestamp.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT

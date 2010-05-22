@@ -228,17 +228,33 @@ sub post_reboot
 # SINDES-begin
 #--------------------------------------------------------------------------
 
-##
-## TODO
-##
-## fix the date on the nodes
-## otherwise possible errors like
-##
-## Preparing...                ##################################################
-## SINDES-client               ##################################################
-## make: Warning: File 'Makefile.crt' has modification time 1.7e+08 s in the futureMakefile.crt    ... Skipped
-## make: warning:  Clock skew detected.  Your build may be incomplete.
-##
+## primitive time syncing for SINDES
+## this is non-critical if it fails
+stso=/tmp/sindes-timestamp
+stse=$stso.error
+
+cmd="wget -q -O $stso http://$th->{server}/sindes-timestamp >& $stse"
+$cmd
+ec=$?
+if [ $ec -eq 0 ]
+then
+  timestamp=`cat $stso | head -1 |tr "'" '_'|grep -v '[_$;-()"]'`
+  if [ -z $timestamp ]
+  then
+    echo "WARNING: no SINDES timestamp set."
+    echo "WARNING: If sindes-get-certificate fails, check for time differences between server and client."
+    echo "WARNING: Downloaded timestamp contains wrong chracters: check $stso" 
+  else
+    echo "SINDES timestamp: new date $timestamp. Current date `date`"
+    date -s "$timestamp"
+  fi
+else
+  echo "WARNING: no SINDES timestamp set."
+  echo "WARNING: If sindes-get-certificate fails, check for time differences between server and client."
+  echo "WARNING: SINDES timestamp failed. No timestamp found (missing httpd config?)"
+  echo "WARNING: SINDES timestamp: command: $cmd"
+  echo "WARNING: SINDES timestamp: output: $stse"
+fi
 
 ##
 ## install needed SINDES rpms

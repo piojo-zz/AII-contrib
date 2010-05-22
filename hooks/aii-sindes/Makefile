@@ -36,6 +36,9 @@ install: check configure man
 	@mkdir -p $(PREFIX)/$(PAN_TEMPLATESDIR)/$(PAN_NAMESPACE_SDIR)/$(PAN_QUATTOR_NS)/aii/$(COMP)
 	@mkdir -p $(PREFIX)/$(QTTR_PERLLIB)/AII
 
+    @mkdir -p $(PREFIX)/usr/bin
+    @mkdir -p $(PREFIX)/etc/httpd/conf.d
+
 	@for i in $(AII_PM); do \
                 install -m 0644 $$i $(PREFIX)/$(QTTR_PERLLIB)/AII; \
         done
@@ -52,6 +55,9 @@ install: check configure man
                 install -m 0644 $$i $(PREFIX)/$(PAN_TEMPLATESDIR)/$(PAN_NAMESPACE_SDIR)/$(PAN_QUATTOR_NS)/aii/$(COMP) ; \
         done
 
+    install -m 0755 timestamp/sindes-timestamp.pl $(PREFIX)/usr/bin
+    install -m 0644 timestamp/sindes-timestamp.conf $(PREFIX)/etc/httpd/conf.d
+    
 clean::
 	@echo cleaning $(NAME) files...
 	@for i in $(AII_PM) $(TPL_FILES); do \

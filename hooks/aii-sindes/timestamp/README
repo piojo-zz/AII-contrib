@@ -1,0 +1,12 @@
+These files are used for a simple time synchronisation within aii_sindes
+
+eg SSL doesn't like it when the clocks are too much out of sync (past or future)
+--> certificate requests won't work without any clear error message
+
+eg error from future (when installing rpms)
+
+Preparing...                ##################################################
+SINDES-client               ##################################################
+make: Warning: File 'Makefile.crt' has modification time 1.7e+08 s in the futureMakefile.crt    ... Skipped
+make: warning:  Clock skew detected.  Your build may be incomplete.
+
