@@ -238,7 +238,7 @@ wget -q -O \\\$stso http://$th->{server}/sindes-timestamp >& \\\$stse
 ec=\\\$?
 if [ \\\$ec -eq 0 ]
 then
-  timestamp=\\\`cat \\\$stso | head -1 |tr "'" '_'|grep -v '[_\\\$;-()"]'\\\`
+  timestamp=\\\`cat \\\$stso | head -1 |tr "'" '_'|grep -v '[-_\\\$;()"]'\\\`
   if [ -z \\\$timestamp ]
   then
     echo "WARNING: no SINDES timestamp set."
