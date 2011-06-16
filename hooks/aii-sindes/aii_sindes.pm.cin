@@ -227,6 +227,8 @@ sub post_reboot
 #--------------------------------------------------------------------------
 # SINDES-begin
 #--------------------------------------------------------------------------
+## general increase
+ulimit -n 4096
 
 ## primitive time syncing for SINDES
 ## this is non-critical if it fails
@@ -239,7 +241,7 @@ ec=\\\$?
 if [ \\\$ec -eq 0 ]
 then
   timestamp=\\\`cat \\\$stso | head -1 |tr "'" '_'|grep -v '[-_\\\$;()"]'\\\`
-  if [ -z \\\$timestamp ]
+  if [ -z "\\\$timestamp" ]
   then
     echo "WARNING: no SINDES timestamp set."
     echo "WARNING: If sindes-get-certificate fails, check for time differences between server and client."
