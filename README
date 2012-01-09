@@ -1,8 +1,9 @@
-This directory will hold community-contributed plugins or hooks for AII.
+This repository holds community-contributed plugins or hooks for AII.
 
-When adding new code to the contrib area, create a new directory under
-plugins or hooks, and add the code there. Do not forget to add a description
-of the new plugin and add a file MAINTAINER.
+Sharing your plugins is encouraged. Do it here, on a GitHub fork or
+anywhere you like to publish your stuff.
 
-The contents of the contrib hierarchy are not part of standard AII and
-are not officially supported by the AII maintainers.
+The AII maintainers take no responsibility or commitments for the
+plugins in this repository, or in any other one maintained by the
+community.
+
