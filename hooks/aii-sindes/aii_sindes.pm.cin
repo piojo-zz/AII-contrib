@@ -49,7 +49,7 @@ sub inf
     print "aii_sindes: info: $msg\n";
 }
 
-sub run_sindessh 
+sub run_sindessh
 {
     my $cmd = shift || "acl -print";
 
@@ -69,13 +69,13 @@ sub get_sindes_name
     ## better to take it from config file
     my $long_host = shift || err("No hostname defined.");
     my $domain = shift || "/etc/sindes/sindesrc";
-    
+
     if ($domain =~ m/^\//) {
         ## It's a file, lets assume it's in SINDESRC format
         open F,$domain || err("Can't open file $domain: $!.");
         my $found=0;
         while(<F>) {
-            $found=$1 if(m/^\s*domain\s*=\s*(\S+)/);        
+            $found=$1 if(m/^\s*domain\s*=\s*(\S+)/);
         };
         close(F);
         if ($found) {
@@ -87,7 +87,7 @@ sub get_sindes_name
     };
 
     ## $domain is a domain now.
-    my $short_host = $long_host; 
+    my $short_host = $long_host;
     my $reg = ".$domain\$";
     $reg =~ s/^\.\././;
     $short_host =~ s/$reg//;
@@ -100,7 +100,7 @@ sub get_sindes_name
         return $short_host;
     };
     err("End of get_sindes_name. You should not get here");
-    
+
 };
 
 sub set_acl
@@ -120,12 +120,12 @@ sub set_acl
             $found=1 if (m/$reg/);
         }
         return 1 if ($found);
-        
+
     };
     if (check_cert($host)) {
         inf("set_acl for host $host failed. Valid certificate found.");
         return 0;
-    } else { 
+    } else {
         err("set_acl for host $host failed.")
     };
 }
@@ -171,7 +171,7 @@ sub revoke_cert
 ## PXE
 ##
 
-sub boot 
+sub boot
 {
     my ($self, $cfg, $path) = @_;
 
@@ -181,15 +181,15 @@ sub boot
     my $th = $cfg->getElement ($path)->getTree;
 
     my $fqdn = "$h.$d";
-    
+
     my $window = 2000;
     $window = $th->{window} if ($th->{window});
-    
+
     set_acl($fqdn,$window);
-    
+
 }
 
-sub remove 
+sub remove
 {
     my ($self, $cfg, $path) = @_;
 
@@ -199,12 +199,12 @@ sub remove
     my $th = $cfg->getElement ($path)->getTree;
 
     my $fqdn = "$h.$d";
-    
+
     my $run = 1;
     $run = $th->{revoke} if (exists($th->{revoke}));
-    
+
     revoke_cert($fqdn) if ($run);
-    
+
 }
 
 
@@ -215,15 +215,17 @@ sub post_reboot
 {
 	my ($self, $config, $path) = @_;
 
-    my $base = "/software/components/sindes_getcert";
+        my $hostname = $config->getElement ("/system/network/hostname");
+        my $base = "/software/components/sindes_getcert";
 
 	my $th = $config->getElement ($base)->getTree;
 
 	my @rpmlist = ('SINDES-client', $th->{ca_cert_rpm});
-	
+
 	print <<EOS;
 
-
+hostname $hostname
+export \\\$HOSTNAME=$hostname
 #--------------------------------------------------------------------------
 # SINDES-begin
 #--------------------------------------------------------------------------
@@ -245,7 +247,7 @@ then
   then
     echo "WARNING: no SINDES timestamp set."
     echo "WARNING: If sindes-get-certificate fails, check for time differences between server and client."
-    echo "WARNING: Downloaded timestamp contains wrong chracters: check \\\$stso" 
+    echo "WARNING: Downloaded timestamp contains wrong chracters: check \\\$stso"
   else
     echo "SINDES timestamp: new date \\\$timestamp. Current date \\\`date\\\`"
     date -s "\\\$timestamp"
@@ -264,14 +266,14 @@ fi
 ##
 
 EOS
-	
+
 	## use ksinstall_rpm
     ksinstall_rpm($config,@rpmlist);
-    
-	## it's necessary that the connection between client and CA is direct. 
+
+	## it's necessary that the connection between client and CA is direct.
 	## therefore, extra routes might be necessary
 	## all routes are of type host (there should only be one)
-	
+
 	if (exists($th->{aii_gw})) {
 	    print "## setup direct route to sindes server\n";
 		print "route add -host $th->{server} gw $th->{aii_gw}\n";
@@ -281,17 +283,17 @@ EOS
 	## generate the SINDES get-cert config file
 	print <<EOS;
 cat \> /etc/sindes/get-cert.conf \<\<EOF
- 	
+
 # Https server
 HTTP_SEL="$th->{protocol}"
 HTTPS_SERVER="$th->{server}"
-	
+
 RENEW_CERT_PORT=$th->{renew_cert_port}
 NEW_CERT_PORT=$th->{new_cert_port}
 
 #domain name, to be removed from the hostname if it's a FQDN
 DOMAIN_NAME="$th->{domain_name}"
-	
+
 #login/passwd for first certificate request.
 # /!\ beware of chicken & egg problem here.
 USER=
@@ -302,46 +304,46 @@ USE_PASSWD=0
 # Organisation and Unit:
 CRT_O="$th->{x509_O}"
 CRT_OU="$th->{x509_OU}"
-	
+
 # RSA or DSA ?
 USE_RSA=1
 KEY_LENGTH=1024
- 	
+
 # usefull for program that needs to key+crt in a single pem file, eg curl
 CREATE_PEM=1
-	
+
 URL_NEW_SUFFIX="/newcert/"
 URL_RENEW_SUFFIX="/renewcert/"
- 	
+
 OPENSSL=openssl
 CURL=curl
 ##CA_CERT_FILE="$th->{cert_dir}/$th->{ca_cert}"
 CA_CERT_DIR="$th->{cert_dir}"
- 	
+
 # if USE_TMP_FILES != "" then 5 following var will
 TMP_DIR=/var/tmp/get-crt-XXXXXX
- 	
+
 CRT_FILE="client.crt"
 PEM_FILE="client_test.pem"
 TMP_CONFIG="client.ssl.config"
 KEY_FILE="client.key"
 CSR_FILE="client.csr"
-	
+
 # do we install the resulting certificate?
 # if so, where? (=-1 indicates we don't want to install this one)
 INSTALL_DIR=$th->{cert_dir}
 CLIENT_CERTIFICATE_PEM=$th->{cert_dir}/$th->{client_cert}
 CLIENT_PRIVATE_KEY_PEM=$th->{cert_dir}/$th->{client_key}
 CLIENT_CERTIFICATE_KEY_PEM=$th->{cert_dir}/$th->{client_cert_key}
- 	
+
 # this one should not be set as ca is _constant_, it should come from an RPM
 CA_CERTIFICATE_PEM=-1
- 	
+
 # if true, will try to overwrite already existing files /!\ dangerous!
 INSTALL_OVERWRITE=0
-	
+
 EOF
-	
+
 
 ### get certificate
 sindes-get-certificate
@@ -349,7 +351,7 @@ sindes-get-certificate
 #--------------------------------------------------------------------------
 # SINDES-end
 #--------------------------------------------------------------------------
- 		
+
 EOS
 
 }
