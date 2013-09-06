@@ -225,7 +225,7 @@ sub post_reboot
 	print <<EOS;
 
 hostname $hostname
-export \\\$HOSTNAME=$hostname
+export HOSTNAME=$hostname
 #--------------------------------------------------------------------------
 # SINDES-begin
 #--------------------------------------------------------------------------
