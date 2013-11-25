@@ -215,7 +215,8 @@ sub post_reboot
 {
 	my ($self, $config, $path) = @_;
 
-        my $hostname = $config->getElement ("/system/network/hostname");
+        my $hostname = $config->getElement ("/system/network/hostname")->getValue();
+        my $domain = $config->getElement ("/system/network/domainname")->getValue();
         my $base = "/software/components/sindes_getcert";
 
 	my $th = $config->getElement ($base)->getTree;
@@ -224,8 +225,8 @@ sub post_reboot
 
 	print <<EOS;
 
-hostname $hostname
-export \\\$HOSTNAME=$hostname
+hostname $hostname.$domain
+export \\\$HOSTNAME=$hostname.$domain
 #--------------------------------------------------------------------------
 # SINDES-begin
 #--------------------------------------------------------------------------
