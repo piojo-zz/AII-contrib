@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use CAF::Process;
 
-use constant CMD => qw(set_dandompasswd.py);
+use constant IPA_CMD => qw(ipa aii);
 
 sub new
 {
@@ -16,19 +16,51 @@ sub new
     return bless {}, $class;
 }
 
-sub get_passwd
+
+#
+# Run the ipa aii --disable, to disable the node. 
+# Disable invalidates the keytab
+# 
+sub ipa_aii_disable
+{
+    my ($self, $server, $domain) = @_;
+
+    my $cmd = CAF::Process->new([IPA_CMD, '--disable', $server, $domain],
+                                stdout => \my $out, stderr => \my $err);
+    if ($?) {
+        die "Couldn't run command: ec $? error $err";
+    }
+}
+
+
+#
+# Run the ipa aii --install, to prepare the node for installation.
+# It returns the OTP
+# 
+sub ipa_aii_install
 {
     my ($self, $server, $domain, $client_ip) = @_;
-
-    my $cmd = CAF::Process->new([CMD, $server, $domain, $client_ip],
-                               stdout => \my $pwd, stderr => \my $err);
-    if ($?) {
-        die "Couldn't run command: $err";
+    my @dns = ();
+    if ($client_ip) {
+        push(@dns, '--ip', $client_ip);
     }
+
+    my $cmd = CAF::Process->new([IPA_CMD, '--install', @dns, $server, $domain],
+                                stdout => \my $out, stderr => \my $err);
+    if ($?) {
+        die "Couldn't run command: ec $? error $err";
+    }
+    my $pwd;
+    $pwd = $1 if $out =~ m/^randompassword\s+=\s+(\S+)\s*$/m;  # multiline search
     return $pwd;
 }
 
-sub get_boot_interface
+#
+# Get the ip of the boot interface. We assume this is 
+# the IP that corresponds with the hostname when FreeIPA 
+# DNS configuration is required.
+#
+sub get_boot_interface_ip
 {
     my ($self, $hw, $net) = @_;
 
@@ -44,19 +76,42 @@ sub post_install
 {
     my ($self, $config, $path) = @_;
 
-    my $t = $config->getElement($path)->getTree();
+    my $tree = $config->getElement($path)->getTree();
 
-    my $nt = $config->getElement("/system/network/interfaces")->getTree();
-    my $hw = $config->getElement("/hardware/cards/nic")->getTree();
+    my $hardware_nics = $config->getElement("/hardware/cards/nic")->getTree();
+    my $network_interfaces = $config->getElement("/system/network/interfaces")->getTree();
 
-    my $ip = $self->get_boot_interface($hw, $nt);
+    my $hostname = $cfg->getElement ('/system/network/hostname')->getValue;
+    my $domainname = $cfg->getElement ('/system/network/domainname')->getValue;
 
-    my $passwd = $self->get_passwd($t->{server}, $t->{domain}, $ip);
+    # FreeIPA DNS control is optional 
+    my $ip;
+    $ip = $self->get_boot_interface($hardware_nics, $network_interfaces) if $t->{dns};
+
+    my $passwd = $self->ipa_aii_install($hostname, $domainname, $ip);
+
+    my $dns = "";
+    $dns = "--enable-dns-updates" if $t->{dns};
 
     print <<EOF;
-/usr/sbin/ipa-client-install --domain=$t->{domain} --enable-dns-updates --mkhomedir -w $passwd --realm=$t->{realm} --server=$t->{server} --unattendedsub post_reboot
+/usr/sbin/ipa-client-install $dns --domain=$t->{domain} --mkhomedir -w $passwd --realm=$t->{realm} --server=$t->{server} --unattendedsub post_reboot
 EOF
 
 }
+
+sub remove
+{
+    my ($self, $cfg, $path) = @_;
+
+    my $tree = $cfg->getElement ($path)->getTree;
+    # TODO proper removal support
+    if ($tree->{disable}) {
+        my $hostname = $cfg->getElement ('/system/network/hostname')->getValue;
+        my $domainname = $cfg->getElement ('/system/network/domainname')->getValue;
+
+        $self->ipa_aii_disable($hostname, $domain);
+    }
+}
+
 
 1;
