@@ -81,35 +81,35 @@ sub post_install
     my $hardware_nics = $config->getElement("/hardware/cards/nic")->getTree();
     my $network_interfaces = $config->getElement("/system/network/interfaces")->getTree();
 
-    my $hostname = $cfg->getElement ('/system/network/hostname')->getValue;
-    my $domainname = $cfg->getElement ('/system/network/domainname')->getValue;
+    my $hostname = $config->getElement ('/system/network/hostname')->getValue;
+    my $domainname = $config->getElement ('/system/network/domainname')->getValue;
 
     # FreeIPA DNS control is optional 
     my $ip;
-    $ip = $self->get_boot_interface($hardware_nics, $network_interfaces) if $t->{dns};
+    $ip = $self->get_boot_interface($hardware_nics, $network_interfaces) if $tree->{dns};
 
     my $passwd = $self->ipa_aii_install($hostname, $domainname, $ip);
 
     my $dns = "";
-    $dns = "--enable-dns-updates" if $t->{dns};
+    $dns = "--enable-dns-updates" if $tree->{dns};
 
     print <<EOF;
-/usr/sbin/ipa-client-install $dns --domain=$t->{domain} --mkhomedir -w $passwd --realm=$t->{realm} --server=$t->{server} --unattendedsub post_reboot
+/usr/sbin/ipa-client-install $dns --domain=$tree->{domain} --mkhomedir -w $passwd --realm=$tree->{realm} --server=$tree->{server} --unattendedsub post_reboot
 EOF
 
 }
 
 sub remove
 {
-    my ($self, $cfg, $path) = @_;
+    my ($self, $config, $path) = @_;
 
-    my $tree = $cfg->getElement ($path)->getTree;
+    my $tree = $config->getElement ($path)->getTree;
     # TODO proper removal support
     if ($tree->{disable}) {
-        my $hostname = $cfg->getElement ('/system/network/hostname')->getValue;
-        my $domainname = $cfg->getElement ('/system/network/domainname')->getValue;
+        my $hostname = $config->getElement ('/system/network/hostname')->getValue;
+        my $domainname = $config->getElement ('/system/network/domainname')->getValue;
 
-        $self->ipa_aii_disable($hostname, $domain);
+        $self->ipa_aii_disable($hostname, $domainname);
     }
 }
 
