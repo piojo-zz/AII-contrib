@@ -25,8 +25,12 @@ sub ipa_aii_disable
 {
     my ($self, $server, $domain) = @_;
 
+    my ($out,$err);
     my $cmd = CAF::Process->new([IPA_CMD, '--disable', $server, $domain],
-                                stdout => \my $out, stderr => \my $err);
+                                log => $self,
+                                stdout => \$out, 
+                                stderr => \$err);
+    $cmd->execute();
     if ($?) {
         die "Couldn't run command: ec $? error $err";
     }
@@ -45,8 +49,12 @@ sub ipa_aii_install
         push(@dns, '--ip', $client_ip);
     }
 
+    my ($out,$err);
     my $cmd = CAF::Process->new([IPA_CMD, '--install', @dns, $server, $domain],
-                                stdout => \my $out, stderr => \my $err);
+                                log => $self,
+                                stdout => \$out, 
+                                stderr => \$err);
+    $cmd->execute();
     if ($?) {
         die "Couldn't run command: ec $? error $err";
     }
@@ -62,11 +70,14 @@ sub ipa_aii_install
 #
 sub get_boot_interface_ip
 {
-    my ($self, $hw, $net) = @_;
+    my ($self, $config) = @_;
 
-    while (my ($k, $v) = each(%$hw)) {
-        if ($v->{boot}) {
-            return $hw->{$v}->{ip};
+    my $hardware_nics = $config->getElement("/hardware/cards/nic")->getTree();
+    my $network_interfaces = $config->getElement("/system/network/interfaces")->getTree();
+
+    while (my ($nic, $data) = each(%$hardware_nics)) {
+        if ($data->{boot}) {
+            return $network_interfaces->{$nic}->{ip};
         }
     }
     die "No boot IP found";
@@ -78,15 +89,12 @@ sub post_install
 
     my $tree = $config->getElement($path)->getTree();
 
-    my $hardware_nics = $config->getElement("/hardware/cards/nic")->getTree();
-    my $network_interfaces = $config->getElement("/system/network/interfaces")->getTree();
-
     my $hostname = $config->getElement ('/system/network/hostname')->getValue;
     my $domainname = $config->getElement ('/system/network/domainname')->getValue;
 
     # FreeIPA DNS control is optional 
     my $ip;
-    $ip = $self->get_boot_interface($hardware_nics, $network_interfaces) if $tree->{dns};
+    $ip = $self->get_boot_interface_ip($config) if $tree->{dns};
 
     my $passwd = $self->ipa_aii_install($hostname, $domainname, $ip);
 
