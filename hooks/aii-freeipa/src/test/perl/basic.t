@@ -35,14 +35,14 @@ ok(command_history_ok(["ipa aii --disable x y.z"]),
 command_history_reset;
 set_output("install_ip");
 
-open STDOUT, ">test.out" or die "Could not redirect STDOUT! $!";
+open STDOUT, ">target/test/test.out" or die "Could not redirect STDOUT! $!";
 $aii->post_install($cfg, $path);
 close STDOUT;
 
 ok(command_history_ok(["ipa aii --install --ip 5.6.7.8 x y.z"]), 
     "ipa aii --install --ip called");
 
-open T, "test.out" or die "Could not read from test.out! $!";
+open T, "target/test/test.out" or die "Could not read from test.out! $!";
 my @contents = <T>;
 close T;
 my $out=join("", @contents);
