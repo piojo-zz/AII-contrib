@@ -32,7 +32,7 @@ sub ipa_aii_disable
                                 stderr => \$err);
     $cmd->execute();
     if ($?) {
-        die "Couldn't run command: ec $? error $err";
+        $main::this_app->error ("Couldn't run command: ec $? error $err");
     }
 }
 
@@ -56,7 +56,8 @@ sub ipa_aii_install
                                 stderr => \$err);
     $cmd->execute();
     if ($?) {
-        die "Couldn't run command: ec $? error $err";
+        $main::this_app->error ("Couldn't run command: ec $? error $err");
+        return undef;
     }
     my $pwd;
     $pwd = $1 if $out =~ m/^randompassword\s+=\s+(\S+)\s*$/m;  # multiline search
@@ -80,7 +81,7 @@ sub get_boot_interface_ip
             return $network_interfaces->{$nic}->{ip};
         }
     }
-    die "No boot IP found";
+    $main::this_app->error ("No boot IP found");
 }
 
 sub post_install
