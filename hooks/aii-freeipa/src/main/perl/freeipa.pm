@@ -60,7 +60,7 @@ sub ipa_aii_install
         return undef;
     }
     my $pwd;
-    $pwd = $1 if $out =~ m/^randompassword\s+=\s+(\S+)\s*$/m;  # multiline search
+    $pwd = $1 if $out =~ m/randompassword\s+=\s+(\S+)\s*$/m;  # multiline search
     return $pwd;
 }
 
