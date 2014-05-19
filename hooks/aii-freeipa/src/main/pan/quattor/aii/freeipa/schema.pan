@@ -1,4 +1,4 @@
-unique template quattor/aii/aii_freeipa/schema;
+unique template quattor/aii/freeipa/schema;
 
 variable FREEIPA_AII_MODULE_NAME = 'freeipa';
 
