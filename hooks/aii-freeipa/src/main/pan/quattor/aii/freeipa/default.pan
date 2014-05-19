@@ -7,14 +7,14 @@ variable FREEIPA_AII_DOMAIN ?= undef;
 variable FREEIPA_AII_SERVER ?= undef;
 variable FREEIPA_AII_REALM ?= undef;
 
-variable FREEIPA_AII_DNS ?= true;
+variable FREEIPA_AII_DNS ?= false;
 variable FREEIPA_AII_DISABLE ?= true;
 
 
-variable FREEIPA_HOOK_BOOT ?= which_hook_is_next("/system/aii/hooks/boot");
+variable FREEIPA_HOOK_POST_INSTALL ?= which_hook_is_next("/system/aii/hooks/post_install");
 
-"/system/aii/hooks/boot/" = {
-    SELF[FREEIPA_HOOK_BOOT] = nlist(
+"/system/aii/hooks/post_install/" = {
+    SELF[FREEIPA_HOOK_POST_INSTALL] = nlist(
         'module', FREEIPA_AII_MODULE_NAME,
         
         'domain', FREEIPA_AII_DOMAIN,
@@ -27,7 +27,7 @@ variable FREEIPA_HOOK_BOOT ?= which_hook_is_next("/system/aii/hooks/boot");
     SELF;
 };
 
-bind "/system/aii/hooks" = nlist with validate_aii_freeipa_hooks('boot');
+bind "/system/aii/hooks" = nlist with validate_aii_freeipa_hooks('post_install');
 
 
 variable FREEIPA_HOOK_REMOVE ?= which_hook_is_next("/system/aii/hooks/remove/");
