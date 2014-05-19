@@ -18,17 +18,17 @@ sub new
 
 
 #
-# Run the ipa aii --disable, to disable the node. 
+# Run the ipa aii --disable, to disable the node.
 # Disable invalidates the keytab
-# 
+#
 sub ipa_aii_disable
 {
     my ($self, $server, $domain) = @_;
 
     my ($out,$err);
     my $cmd = CAF::Process->new([IPA_CMD, '--disable', $server, $domain],
-                                log => $self,
-                                stdout => \$out, 
+                                log => $main::this_app,
+                                stdout => \$out,
                                 stderr => \$err);
     $cmd->execute();
     if ($?) {
@@ -40,7 +40,7 @@ sub ipa_aii_disable
 #
 # Run the ipa aii --install, to prepare the node for installation.
 # It returns the OTP
-# 
+#
 sub ipa_aii_install
 {
     my ($self, $server, $domain, $client_ip) = @_;
@@ -51,8 +51,8 @@ sub ipa_aii_install
 
     my ($out,$err);
     my $cmd = CAF::Process->new([IPA_CMD, '--install', @dns, $server, $domain],
-                                log => $self,
-                                stdout => \$out, 
+                                log => $main::this_app,
+                                stdout => \$out,
                                 stderr => \$err);
     $cmd->execute();
     if ($?) {
@@ -65,8 +65,8 @@ sub ipa_aii_install
 }
 
 #
-# Get the ip of the boot interface. We assume this is 
-# the IP that corresponds with the hostname when FreeIPA 
+# Get the ip of the boot interface. We assume this is
+# the IP that corresponds with the hostname when FreeIPA
 # DNS configuration is required.
 #
 sub get_boot_interface_ip
@@ -93,7 +93,7 @@ sub post_install
     my $hostname = $config->getElement ('/system/network/hostname')->getValue;
     my $domainname = $config->getElement ('/system/network/domainname')->getValue;
 
-    # FreeIPA DNS control is optional 
+    # FreeIPA DNS control is optional
     my $ip;
     $ip = $self->get_boot_interface_ip($config) if $tree->{dns};
 
