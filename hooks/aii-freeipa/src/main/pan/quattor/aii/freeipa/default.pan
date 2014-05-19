@@ -1,6 +1,6 @@
-template quattor/aii/aii_freeipa/default;
+template quattor/aii/freeipa/default;
 
-include { 'quattor/aii/aii_freeipa/schema' };
+include { 'quattor/aii/freeipa/schema' };
 
 
 variable FREEIPA_AII_DOMAIN ?= undef;
