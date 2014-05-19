@@ -64,7 +64,7 @@ type structure_aii_freeipa = {
     "server" : type_hostname # FreeIPA server
     "realm" : string # FreeIPA realm
 
-    "dns" : boolean = true # DNS is controlled by FreeIPA (to register the host ip)
+    "dns" : boolean = false # DNS is controlled by FreeIPA (to register the host ip)
     "disable" : boolean = true # disable the host on AII removal
 };
 

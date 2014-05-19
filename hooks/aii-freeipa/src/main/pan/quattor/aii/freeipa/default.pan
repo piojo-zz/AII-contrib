@@ -7,7 +7,7 @@ variable FREEIPA_AII_DOMAIN ?= undef;
 variable FREEIPA_AII_SERVER ?= undef;
 variable FREEIPA_AII_REALM ?= undef;
 
-variable FREEIPA_AII_DNS ?= true;
+variable FREEIPA_AII_DNS ?= false;
 variable FREEIPA_AII_DISABLE ?= true;
 
 
