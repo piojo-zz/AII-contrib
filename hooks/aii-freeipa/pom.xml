@@ -178,6 +178,7 @@
             <requires>
               <require>perl-CAF</require>
               <require>ipa-python</require>
+              <require>ipa-admintools</require>
             </requires>
             <mappings>
               <mapping>
