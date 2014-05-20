@@ -84,7 +84,7 @@ sub get_boot_interface_ip
     $main::this_app->error ("No boot IP found");
 }
 
-sub post_install
+sub post_reboot
 {
     my ($self, $config, $path) = @_;
 
@@ -103,7 +103,13 @@ sub post_install
     $dns = "--enable-dns-updates" if $tree->{dns};
 
     print <<EOF;
-/usr/sbin/ipa-client-install $dns --domain=$tree->{domain} --mkhomedir -w $passwd --realm=$tree->{realm} --server=$tree->{server} --unattendedsub post_reboot
+/usr/sbin/ipa-client-install $dns \\
+    --domain=$tree->{domain} \\
+    --password=$passwd \\
+    --unattended \\
+    --realm=$tree->{realm} \\
+    --server=$tree->{server} \\
+    || fail "ipa-client-install failed"
 EOF
 
 }

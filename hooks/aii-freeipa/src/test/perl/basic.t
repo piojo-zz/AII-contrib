@@ -35,19 +35,20 @@ ok(command_history_ok(["ipa aii --disable x y.z"]),
 command_history_reset;
 set_output("install_ip");
 
-open STDOUT, ">target/test/test.out" or die "Could not redirect STDOUT! $!";
-$aii->post_install($cfg, $path);
-close STDOUT;
+my $fh = CAF::FileWriter->new("target/test/ks");
+select($fh);
+
+$aii->post_reboot($cfg, $path);
 
 ok(command_history_ok(["ipa aii --install --ip 5.6.7.8 x y.z"]), 
     "ipa aii --install --ip called");
 
-open T, "target/test/test.out" or die "Could not read from test.out! $!";
-my @contents = <T>;
-close T;
-my $out=join("", @contents);
-like($out, qr(^/usr/sbin/ipa-client-install)m, "Call ipa-client-install");
-like($out, qr/--domain=z\s+--mkhomedir\s+-w\s+onetimepassword\s+--realm=DUMMY\s+--server=ipa.y.z\s+--unattendedsub\s+post_reboot/, "FreeIPA params ok");
-like($out, qr(--enable-dns-updates)m, "IPA dns enabled");
+like($fh, qr(^/usr/sbin/ipa-client-install.*\\$)m, "Call ipa-client-install");
+like($fh, qr/\s--domain=z\s+\\$/m, "FreeIPA params domain");
+like($fh, qr/\s--password=onetimepassword\s+\\$/m, "FreeIPA params password");
+like($fh, qr/\s--realm=DUMMY\s+\\$/m, "FreeIPA params realm");
+like($fh, qr/\s--server=ipa.y.z\s+\\$/m, "FreeIPA params server");
+like($fh, qr/\s--unattended\s+\\$/m, "FreeIPA params unattended");
+like($fh, qr(--enable-dns-updates)m, "IPA dns enabled");
 
 done_testing();
