@@ -103,12 +103,13 @@ sub post_reboot
     $dns = "--enable-dns-updates" if $tree->{dns};
 
     print <<EOF;
-/usr/sbin/ipa-client-install $dns \
-    --domain=$tree->{domain} \
-    --password=$passwd \
-    --unattended \
-    --realm=$tree->{realm} \
-    --server=$tree->{server} || fail "ipa-client-install failed"
+/usr/sbin/ipa-client-install $dns \\
+    --domain=$tree->{domain} \\
+    --password=$passwd \\
+    --unattended \\
+    --realm=$tree->{realm} \\
+    --server=$tree->{server} \\
+    || fail "ipa-client-install failed"
 EOF
 
 }
