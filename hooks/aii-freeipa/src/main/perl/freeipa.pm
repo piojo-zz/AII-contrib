@@ -103,6 +103,8 @@ sub post_reboot
     $dns = "--enable-dns-updates" if $tree->{dns};
 
     print <<EOF;
+yum -c /tmp/aii/yum/yum.conf -y install ipa-client
+
 /usr/sbin/ipa-client-install $dns \\
     --domain=$tree->{domain} \\
     --password=$passwd \\
