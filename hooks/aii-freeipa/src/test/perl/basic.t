@@ -51,4 +51,7 @@ like($fh, qr/\s--server=ipa.y.z\s+\\$/m, "FreeIPA params server");
 like($fh, qr/\s--unattended\s+\\$/m, "FreeIPA params unattended");
 like($fh, qr(--enable-dns-updates)m, "IPA dns enabled");
 
+like($fh, qr(^yum -c /tmp/aii/yum/yum.conf -y install ipa-client)m, "install ipa-client in post_reboot");
+
+
 done_testing();
